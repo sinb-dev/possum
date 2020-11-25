@@ -15,20 +15,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in availableItems" v-bind:key="item.id">
+        <tr v-for="item in storeItems" v-bind:key="item.id">
           <td data-label="Item">
-            <input
+            <div class="ui input"><input
               class="ui input"
               type="text"
               v-model="item.name"
               @change="save"
-            />
+            /></div>
           </td>
           <td data-label="Price">
-            <input type="number" size="6" v-model="item.price" />
+            <div class="ui input"><input type="number" size="6" v-model="item.price" /></div>
           </td>
           <td data-label="Stock">
-            <input type="number" size="6" v-model="item.stock" />
+            <div class="ui input"><input type="number" size="6" v-model="item.stock" /></div>
           </td>
           <td><select v-model="item.category">
               <option v-for="cat in categories" v-bind:key="cat">{{cat}}</option>
@@ -43,9 +43,9 @@
         </tr>
 
         <tr>
-          <td><input class="ui input" type="text" v-model="newitem.name" /></td>
-          <td><input type="number" size="6" v-model="newitem.price" /></td>
-          <td><input type="number" size="6" v-model="newitem.stock" /></td>
+          <td><div class="ui input"><input class="ui input" type="text" v-model="newitem.name" /></div></td>
+          <td><div class="ui input"><input type="number" size="6" v-model="newitem.price" /></div></td>
+          <td><div class="ui input"><input type="number" size="6" v-model="newitem.stock" /></div></td>
           <td><select v-model="newitem.category">
               <option v-for="cat in categories" v-bind:key="cat">{{cat}}</option>
             </select></td>
@@ -88,18 +88,7 @@ export default {
         category : "",
         hidden: false,
       },
-      rev: "",
-      availableItems: [
-        /*{id : 1, name: "3 Æbleskiver", price: "15", category : "food", hidden : false},
-                {id : 2, name: "5 Æbleskiver", price: "20", category : "food"},
-                {id : 3, name: "Gløgg", price: "5", category : "beverage"},
-                {id : 4, name: "Kaffe", price: "5", category : "beverage"},
-                {id : 5, name: "Sodavand", price: "10", category : "drink"},
-                {id : 6, name: "Risengrød", price: "15", category : "food"},
-                {id : 7, name: "Bestik", price: "5", category : "misc"},
-                {id : 8, name: "Julegodter", price: "25", category : "candy"},
-                {id : 9, name: "Brændte mandler", price: "25", category : "candy"},
-                {id : 10, name: "Frugt", price: "5", category : "food", stock : 10},*/
+      storeItems: [
       ],
       transactionItems: [],
     };
@@ -107,7 +96,7 @@ export default {
   methods: {
     getNextId() {
       var id = 1;
-      this.availableItems.forEach(function (item) {
+      this.storeItems.forEach(function (item) {
         if (parseInt(item.id) >= id) {
           id = parseInt(item.id) + 1;
         }
@@ -120,17 +109,17 @@ export default {
         }
     },
     remove(item) {
-      for (var index in this.availableItems) {
-          if (this.availableItems[index].id == item.id) {
+      for (var index in this.storeItems) {
+          if (this.storeItems[index].id == item.id) {
             break;
           }
       }
-      this.availableItems.splice(index,1);
+      this.storeItems.splice(index,1);
       this.save();
     },
     save() {
       if (this.newitem.name != "") {
-            this.availableItems.push({
+          this.storeItems.push({
             id: this.getNextId(),
             name: this.newitem.name,
             price: this.newitem.price,
@@ -140,53 +129,31 @@ export default {
         this.newitem.name = "";
         this.newitem.price = "";
       }
-      
-      var PouchDB = require("pouchdb-browser").default; //npm install --save pouchdb-browser
-      var db = new PouchDB("possum");
-      var self = this;
-      db.put({
-        _id: "items",
-        items: this.availableItems,
-        _rev: this.rev,
-      })
-        .then(function () {
-          console.log("Saved");
-          
-          self.load();
-        })
-        .catch(function (err) {
-          console.error(err);
-        });
+      this.$root.save(this.storeItems);
     },
-    load() {
-      var PouchDB = require("pouchdb-browser").default;
-      var db = new PouchDB("possum");
-      var self = this;
-      db.get("items").then(function (doc) {
-        self.availableItems = doc.items;
 
-        self.rev = doc._rev;
-      });
-    },
     crowd() {
-      this.availableItems = [
-                {id : 1, name: "3 Æbleskiver", price: "15", category : "food"},
-                {id : 2, name: "5 Æbleskiver", price: "20", category : "food"},
-                {id : 3, name: "Gløgg", price: "5", category : "beverage"},
-                {id : 4, name: "Kaffe", price: "5", category : "beverage"},
-                {id : 5, name: "Cola 33 cl", price: "10", category : "drink"},
-                {id : 6, name: "Risengrød", price: "15", category : "food"},
-                {id : 7, name: "Bestik", price: "5", category : "misc"},
-                {id : 8, name: "Julegodter", price: "25", category : "goody"},
-                {id : 9, name: "Brændte mandler", price: "25", category : "goody"},
-                {id : 2, name: "Frugt", price: "5", category : "food"},
-                {id : 5, name: "Appelsin 33 cl", price: "10", category : "drink"},
-            ]
+      this.storeItems = [
+          {id : 1, name: "3 Æbleskiver", price: "15", category : "food", stock : 300},
+          {id : 2, name: "5 Æbleskiver", price: "20", category : "food", stock : 300},
+          {id : 3, name: "Gløgg", price: "5", category : "beverage", stock : ''},
+          {id : 4, name: "Kaffe", price: "5", category : "beverage", stock : ''},
+          {id : 5, name: "Cola 33 cl", price: "10", category : "drink", stock : 6*24},
+          {id : 6, name: "Risengrød", price: "15", category : "food", stock : ''},
+          {id : 7, name: "Bestik", price: "5", category : "misc", stock : ''},
+          {id : 8, name: "Julegodter", price: "25", category : "goody", stock : ''},
+          {id : 9, name: "Brændte mandler", price: "25", category : "goody", stock : ''},
+          {id : 10, name: "Frugt", price: "5", category : "food", stock : ''},
+          {id : 11, name: "Appelsin 33 cl", price: "10", category : "drink", stock : 4*24},
+      ]
       this.save();
     }
   },
   mounted() {
-    this.load();
+    var self = this;
+    this.$root.load(function(storeItems) {
+      self.storeItems = storeItems;
+    });
   },
 };
 </script>

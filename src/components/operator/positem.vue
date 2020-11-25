@@ -19,7 +19,6 @@ export default {
             case "goody": return "yellow";
             default: return "";
         }
-        
       }
     }
 }

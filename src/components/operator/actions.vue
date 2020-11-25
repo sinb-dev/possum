@@ -1,14 +1,13 @@
 <template>
     <div class="actions">
-        <div class="posaction red"><div class="highlight"></div><div class="item">Slet</div></div>
-        <div class="posaction yellow"><div class="highlight"></div><div class="item">Nulstil</div></div>
-        <div class="posaction green approve"><div class="highlight"></div><div class="item">Godkend</div></div>
+        <div class="posaction red" @click="$emit('onremove')"><div class="highlight"></div><div class="item">Slet</div></div>
+        <div class="posaction yellow" @click="$emit('onreset')"><div class="highlight"></div><div class="item">Nulstil</div></div>
+        <div class="posaction green approve" @click="$emit('onbuy')"><div class="highlight"></div><div class="item">Godkend</div></div>
     </div>
 </template>
 
 <script>
 export default {
-
 }
 </script>
 
