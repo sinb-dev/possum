@@ -42,7 +42,7 @@ export default {
             var self = this;
             this.transactionItems.forEach(function(transItem) {
                 self.storeItems.forEach(function(item) {
-                    if (item.id == transItem.id) {
+                    if (item.id == transItem.id && item.stock > 0 && item.stock != "") {
                         item.stock--;
                     }
                 });
